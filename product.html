@@ -16,9 +16,6 @@
         .product-card:hover { border-color: #FFF200; transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
         .drawer { transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); position: fixed; top: 0; right: 0; height: 100%; background: white; width: 400px; transform: translateX(100%); z-index: 1000; box-shadow: -20px 0 50px rgba(0,0,0,0.15); }
         .drawer-open { transform: translateX(0); }
-        .glass-card { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); }
-        .stripe-btn { background-color: #635bff; color: white; transition: 0.2s; }
-        .stripe-btn:hover { background-color: #534dbd; scale: 1.05; }
     </style>
 </head>
 <body class="pb-20">
@@ -47,48 +44,16 @@
         </div>
     </nav>
 
-    <!-- Header & Hero -->
+    <!-- Header -->
     <header class="bg-white border-b py-12 px-8 mb-12">
         <div class="max-w-7xl mx-auto">
-            <div id="featured-hero" class="mb-12"></div>
-            <h2 class="font-black italic text-4xl uppercase font-condensed tracking-tighter">FULL <span class="text-[#FFF200] bg-black px-2">INVENTORY</span></h2>
-            <p class="text-[10px] text-gray-400 font-bold uppercase tracking-[0.3em] mt-2">Filter by sector or browse active protocols</p>
+            <h2 class="font-black italic text-4xl uppercase font-condensed tracking-tighter">SECURE <span class="text-[#FFF200] bg-black px-2">INVENTORY</span></h2>
+            <p class="text-[10px] text-gray-400 font-bold uppercase tracking-[0.3em] mt-2">Auto-synced via Stripe Cloud Protocols</p>
         </div>
     </header>
 
-    <!-- Main Content Area -->
-    <main class="max-w-7xl mx-auto px-8">
-        <!-- Manual Section: Social Growth -->
-        <section class="mb-16">
-            <div class="flex items-center gap-4 mb-8">
-                <h2 class="font-black italic text-2xl uppercase font-condensed tracking-tighter">Social Growth</h2>
-                <div class="h-[2px] flex-1 bg-gray-100"></div>
-            </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                <div class="product-card p-8 flex flex-col justify-between h-80">
-                    <div>
-                        <div class="flex justify-between mb-4">
-                            <span class="text-[9px] font-black uppercase bg-black text-[#FFF200] px-2 py-1">Direct Injection</span>
-                            <span class="text-[9px] font-black text-gray-300">#TIK-01</span>
-                        </div>
-                        <h3 class="font-black uppercase italic text-xl font-condensed tracking-tight mb-2">TikTok Followers</h3>
-                        <p class="text-[10px] text-gray-400 font-bold uppercase leading-relaxed line-clamp-3">
-                            Accelerated audience deployment for creators. High-retention protocol handled via Stripe.
-                        </p>
-                    </div>
-                    <div class="mt-8 pt-6 border-t border-gray-50 flex justify-between items-center">
-                        <p class="text-red-600 font-black italic text-2xl">$15.00</p>
-                        <button onclick="addToManualCart('TikTok Followers', 15.00, 'Social Growth')" class="stripe-btn px-6 py-3 rounded font-black text-[10px] uppercase tracking-widest">
-                            Add to Queue
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Dynamic Content from Firebase -->
-        <div id="store-content"></div>
-    </main>
+    <!-- Main Content Area (Stripe Products Rendered Here) -->
+    <main id="store-content" class="max-w-7xl mx-auto px-8"></main>
 
     <!-- Cart Drawer -->
     <div id="cart-drawer" class="drawer flex flex-col">
@@ -101,7 +66,7 @@
                 <span>Total Assets Value</span>
                 <span id="cart-total" class="text-red-600 text-2xl font-black italic">$0.00</span>
             </div>
-            <button id="checkout-btn" class="w-full bg-[#FFF200] py-5 font-black uppercase text-xs tracking-widest hover:bg-black hover:text-[#FFF200] transition">Initialize Stripe Deployment</button>
+            <button id="checkout-btn" class="w-full bg-[#FFF200] py-5 font-black uppercase text-xs tracking-widest hover:bg-black hover:text-[#FFF200] transition">Initialize Deployment</button>
         </div>
     </div>
 
@@ -114,9 +79,9 @@
     </footer>
 
     <script type="module">
-        import { auth, db, onAuthStateChanged, getDoc, doc, onSnapshot, collection, query, orderBy } from './firebase.js';
+        import { auth } from './firebase.js';
 
-        // Initialize Stripe with Live Publishable Key
+        // Initialize Stripe Live
         const stripe = Stripe('pk_live_51Riq9RFxpqsrfmN9CDqvAiNzL8bwdVZbMiq1SPWI8KxfI7Rv0DRzeqkZGpLIhCtrD91rIFYdL1GIUfXC8X2echGw00SDJZzoz3');
         
         let cart = JSON.parse(localStorage.getItem('xclipse_cart')) || [];
@@ -133,21 +98,77 @@
             }
         };
 
-        // Cart & Manual Adding
-        window.addToManualCart = (name, price, platform) => {
-            const item = { name, price, platform, id: 'man-' + Date.now() };
-            cart.push(item);
-            updateCart();
-            UI.notify(`${name} added to secure queue.`);
-        };
+        // UI Handlers
+        document.getElementById('cart-trigger').onclick = () => document.getElementById('cart-drawer').classList.add('drawer-open');
+        document.getElementById('close-cart').onclick = () => document.getElementById('cart-drawer').classList.remove('drawer-open');
 
-        // Firebase Logic & Listeners
-        onSnapshot(query(collection(db, "assets"), orderBy("platform", "asc")), (snapshot) => {
+        /**
+         * STRIPE AUTO-SYNC INVENTORY
+         */
+        async function syncInventory() {
             const container = document.getElementById('store-content');
-            container.innerHTML = '';
-            // (Same Firebase rendering logic as before, using cart.push and updateCart)
-            // Ensure cards call updateCart() and UI.notify()
-        });
+            container.innerHTML = '<div class="text-center font-black animate-pulse py-20 text-gray-300">SYNCING STRIPE PROTOCOLS...</div>';
+
+            try {
+                // Fetch from your deployed getStripeInventory function
+                const response = await fetch('https://YOUR_REGION-YOUR_PROJECT.cloudfunctions.net/getStripeInventory');
+                const inventory = await response.json();
+
+                container.innerHTML = ''; // Clear loader
+
+                // Group by 'sector' metadata
+                const sectors = inventory.reduce((acc, item) => {
+                    const key = item.sector || 'General Assets';
+                    if (!acc[key]) acc[key] = [];
+                    acc[key].push(item);
+                    return acc;
+                }, {});
+
+                Object.keys(sectors).forEach(name => {
+                    const section = document.createElement('section');
+                    section.className = "mb-16";
+                    section.innerHTML = `
+                        <div class="flex items-center gap-4 mb-8">
+                            <h2 class="font-black italic text-2xl uppercase font-condensed tracking-tighter">${name}</h2>
+                            <div class="h-[2px] flex-1 bg-gray-100"></div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+                    `;
+
+                    const grid = section.querySelector('.grid');
+                    sectors[name].forEach(item => {
+                        const card = document.createElement('div');
+                        card.className = "product-card p-8 flex flex-col justify-between h-auto min-h-[320px]";
+                        card.innerHTML = `
+                            <div>
+                                <div class="flex justify-between mb-4">
+                                    <span class="text-[9px] font-black uppercase bg-gray-100 px-2 py-1">Active Asset</span>
+                                    <span class="text-[9px] font-black text-gray-300">#${item.id.substring(3,9)}</span>
+                                </div>
+                                <img src="${item.image}" class="w-12 h-12 mb-4 object-contain grayscale hover:grayscale-0 transition opacity-60 hover:opacity-100">
+                                <h3 class="font-black uppercase italic text-xl font-condensed tracking-tight mb-2">${item.name}</h3>
+                                <p class="text-[10px] text-gray-400 font-bold uppercase leading-relaxed line-clamp-3">${item.description || ''}</p>
+                            </div>
+                            <div class="mt-8 pt-6 border-t border-gray-50 flex justify-between items-center">
+                                <p class="text-red-600 font-black italic text-2xl">$${item.price.toFixed(2)}</p>
+                                <button class="bg-black text-[#FFF200] h-12 w-12 flex items-center justify-center rounded hover:bg-[#FFF200] hover:text-black transition shadow-lg">
+                                    <i class="fa-solid fa-plus"></i>
+                                </button>
+                            </div>
+                        `;
+                        card.querySelector('button').onclick = () => { 
+                            cart.push(item); 
+                            updateCart(); 
+                            UI.notify(`${item.name} added to deployment.`); 
+                        };
+                        grid.appendChild(card);
+                    });
+                    container.appendChild(section);
+                });
+            } catch (err) {
+                UI.notify('Sync Failure: Gateway Offline', 'error');
+            }
+        }
 
         function updateCart() {
             localStorage.setItem('xclipse_cart', JSON.stringify(cart));
@@ -159,11 +180,11 @@
                 list.innerHTML += `
                     <div class="p-5 border border-gray-200 bg-white rounded-sm flex justify-between items-center">
                         <div>
-                            <p class="text-[10px] font-black uppercase text-gray-400">${item.platform}</p>
+                            <p class="text-[10px] font-black uppercase text-gray-400">${item.sector}</p>
                             <p class="font-black uppercase italic text-sm font-condensed">${item.name}</p>
                             <p class="text-red-600 font-black italic text-sm">$${item.price.toFixed(2)}</p>
                         </div>
-                        <button onclick="removeItem(${index})" class="text-gray-300 hover:text-red-600"><i class="fa-solid fa-xmark"></i></button>
+                        <button onclick="window.removeItem(${index})" class="text-gray-300 hover:text-red-600"><i class="fa-solid fa-xmark"></i></button>
                     </div>`;
             });
             document.getElementById('cart-total').innerText = `$${total.toFixed(2)}`;
@@ -174,28 +195,32 @@
             updateCart();
         };
 
-        // STRIPE DEPLOYMENT
+        /**
+         * STRIPE CHECKOUT HANDSHAKE
+         */
         document.getElementById('checkout-btn').onclick = async () => {
-            if (cart.length === 0) return UI.notify('Queue is empty', 'error');
-            UI.notify('Opening Secure Stripe Gateway...');
+            if (cart.length === 0) return UI.notify('No assets for deployment.', 'error');
+            UI.notify('Opening Stripe Gateway...');
 
             try {
-                // Call your Firebase Function (must be deployed with your Secret Key)
-                const response = await fetch('/api/create-stripe-session', {
+                // Call your deployed createStripeSession function
+                const response = await fetch('https://YOUR_REGION-YOUR_PROJECT.cloudfunctions.net/createStripeSession', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ items: cart })
+                    body: JSON.stringify({ 
+                        items: cart,
+                        customer_email: auth.currentUser ? auth.currentUser.email : null 
+                    })
                 });
                 const session = await response.json();
                 await stripe.redirectToCheckout({ sessionId: session.id });
             } catch (err) {
-                UI.notify('Stripe handshaking failed.', 'error');
+                UI.notify('Handshake failed.', 'error');
             }
         };
 
-        document.getElementById('cart-trigger').onclick = () => document.getElementById('cart-drawer').classList.add('drawer-open');
-        document.getElementById('close-cart').onclick = () => document.getElementById('cart-drawer').classList.remove('drawer-open');
         updateCart();
+        syncInventory();
     </script>
 </body>
 </html>
