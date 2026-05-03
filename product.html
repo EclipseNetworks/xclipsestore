@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="en-AU">
 <head>
-    <meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>XCLIPSE STORE | INVENTORY</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@700&family=Nunito+Sans:wght@400;700;900&display=swap" rel="stylesheet">
@@ -9,29 +10,34 @@
     <style>
         body { background: #f8f8f8; font-family: 'Nunito Sans', sans-serif; }
         .font-condensed { font-family: 'Roboto Condensed', sans-serif; }
-        .product-card { background: white; border: 1px solid #e5e7eb; transition: 0.3s; }
+        .product-card { background: white; border: 1px solid #e5e7eb; transition: 0.3s; position: relative; overflow: hidden; }
         .product-card:hover { border-color: #FFF200; transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
         .drawer { transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); position: fixed; top: 0; right: 0; height: 100%; background: white; width: 400px; transform: translateX(100%); z-index: 1000; box-shadow: -20px 0 50px rgba(0,0,0,0.15); }
         .drawer-open { transform: translateX(0); }
+        .glass-card { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); }
+        .square-btn { background-color: #006aff; color: white; transition: 0.2s; }
+        .square-btn:hover { background-color: #0056d1; scale: 1.05; }
     </style>
 </head>
 <body class="pb-20">
 
+    <!-- Status Bar -->
     <div class="bg-[#FFF200] text-black text-[10px] font-black uppercase tracking-[0.2em] py-2 text-center">
         ⚡ Active Network Monitoring Online - 24/7 Deployment Enabled ⚡
     </div>
 
+    <!-- Navigation -->
     <nav class="bg-black py-5 px-8 sticky top-0 z-50 flex justify-between items-center">
         <h1 class="text-[#FFF200] font-black italic text-2xl uppercase tracking-tighter font-condensed">
             XCLIPSE <span class="text-white">STORE</span>
         </h1>
         <div class="hidden md:flex gap-8 text-white text-[11px] font-black uppercase tracking-widest">
-            <a href="index.html" class="hover:text-[#FFF200]">Home</a>
-            <a href="product.html" class="text-[#FFF200]">Shop All</a>
-            <a href="my-account.html" class="hover:text-[#FFF200]">Account</a>
+            <a class='hover:text-[#FFF200]' href='/'>Home</a>
+            <a class='text-[#FFF200]' href='/product'>Shop All</a>
+            <a class='hover:text-[#FFF200]' href='/my-account'>Account</a>
         </div>
         <div class="flex items-center gap-6">
-            <a id="admin-btn" href="admin.html" class="hidden bg-red-600 text-white px-3 py-1 rounded font-black text-[9px] uppercase italic">Admin Console</a>
+            <a class='hidden bg-red-600 text-white px-3 py-1 rounded font-black text-[9px] uppercase italic' href='/admin' id='admin-btn'>Admin Console</a>
             <div id="cart-trigger" class="relative cursor-pointer text-[#FFF200]">
                 <i class="fa-solid fa-cart-shopping text-xl"></i>
                 <span id="cart-count" class="absolute -top-3 -right-3 bg-white text-black text-[9px] px-1.5 rounded-full border-2 border-black font-black">0</span>
@@ -39,15 +45,50 @@
         </div>
     </nav>
 
+    <!-- Header & Hero -->
     <header class="bg-white border-b py-12 px-8 mb-12">
         <div class="max-w-7xl mx-auto">
+            <div id="featured-hero" class="mb-12"></div>
             <h2 class="font-black italic text-4xl uppercase font-condensed tracking-tighter">FULL <span class="text-[#FFF200] bg-black px-2">INVENTORY</span></h2>
             <p class="text-[10px] text-gray-400 font-bold uppercase tracking-[0.3em] mt-2">Filter by sector or browse active protocols</p>
         </div>
     </header>
 
-    <main id="store-content" class="max-w-7xl mx-auto px-8"></main>
+    <!-- Main Content Area -->
+    <main class="max-w-7xl mx-auto px-8">
+        <!-- Manual Section: Social Growth (Square Integrated) -->
+        <section class="mb-16">
+            <div class="flex items-center gap-4 mb-8">
+                <h2 class="font-black italic text-2xl uppercase font-condensed tracking-tighter">Social Growth</h2>
+                <div class="h-[2px] flex-1 bg-gray-100"></div>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="product-card p-8 flex flex-col justify-between h-80">
+                    <div>
+                        <div class="flex justify-between mb-4">
+                            <span class="text-[9px] font-black uppercase bg-black text-[#FFF200] px-2 py-1">Direct Injection</span>
+                            <span class="text-[9px] font-black text-gray-300">#TIK-01</span>
+                        </div>
+                        <h3 class="font-black uppercase italic text-xl font-condensed tracking-tight mb-2">TikTok Followers</h3>
+                        <p class="text-[10px] text-gray-400 font-bold uppercase leading-relaxed line-clamp-3">
+                            Accelerated audience deployment for Xclipse Studio creators. High-retention protocol.
+                        </p>
+                    </div>
+                    <div class="mt-8 pt-6 border-t border-gray-50 flex justify-between items-center">
+                        <p class="text-red-600 font-black italic text-2xl">$15.00</p>
+                        <a href="https://square.link/u/yrZquJIK?src=embed" target="_blank" class="square-btn px-6 py-3 rounded font-black text-[10px] uppercase tracking-widest">
+                            Buy Now
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
 
+        <!-- Dynamic Content from Firebase -->
+        <div id="store-content"></div>
+    </main>
+
+    <!-- Cart Drawer -->
     <div id="cart-drawer" class="drawer flex flex-col">
         <div class="bg-black p-8 flex justify-between items-center text-[#FFF200] font-black italic text-2xl uppercase font-condensed">
             Your Cart <button id="close-cart" class="text-white hover:text-[#FFF200]">×</button>
@@ -58,10 +99,11 @@
                 <span>Total Assets Value</span>
                 <span id="cart-total" class="text-red-600 text-2xl font-black italic">$0.00</span>
             </div>
-            <button class="w-full bg-[#FFF200] py-5 font-black uppercase text-xs tracking-widest hover:bg-black hover:text-[#FFF200] transition">Initialize Deployment</button>
+            <button id="checkout-btn" class="w-full bg-[#FFF200] py-5 font-black uppercase text-xs tracking-widest hover:bg-black hover:text-[#FFF200] transition">Initialize Deployment</button>
         </div>
     </div>
 
+    <!-- Footer -->
     <footer class="bg-white border-t mt-32 py-16 px-8">
         <div class="max-w-7xl mx-auto text-center">
             <h1 class="text-black font-black italic text-2xl uppercase tracking-tighter font-condensed mb-6">XCLIPSE <span class="text-[#FFF200] bg-black px-1">STORE</span></h1>
@@ -72,8 +114,22 @@
     <script type="module">
         import { auth, db, onAuthStateChanged, getDoc, doc, onSnapshot, collection, query, orderBy } from './firebase.js';
 
-        let cart = [];
+        let cart = JSON.parse(localStorage.getItem('xclipse_cart')) || [];
 
+        // UI Utility
+        const UI = {
+            notify: (message, type = 'success') => {
+                const toast = document.createElement('div');
+                toast.className = `fixed bottom-10 left-1/2 -translate-x-1/2 px-8 py-4 rounded-xl font-black text-[10px] uppercase tracking-[0.2em] z-[2000] shadow-2xl transition-all duration-500`;
+                toast.style.backgroundColor = type === 'success' ? '#FFF200' : '#ff4444';
+                toast.style.color = type === 'success' ? '#000' : '#fff';
+                toast.innerText = `[SYSTEM]: ${message}`;
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove(), 3000);
+            }
+        };
+
+        // Admin Access Check
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 const snap = await getDoc(doc(db, "users", user.uid));
@@ -81,14 +137,34 @@
             }
         });
 
+        // Cart Interaction
         document.getElementById('cart-trigger').onclick = () => document.getElementById('cart-drawer').classList.add('drawer-open');
         document.getElementById('close-cart').onclick = () => document.getElementById('cart-drawer').classList.remove('drawer-open');
 
+        // Dynamic Store Loading
         const q = query(collection(db, "assets"), orderBy("platform", "asc"));
         onSnapshot(q, (snapshot) => {
             const container = document.getElementById('store-content');
             container.innerHTML = '';
 
+            // Update Hero
+            if (snapshot.docs.length > 0) {
+                const featured = snapshot.docs[0].data();
+                document.getElementById('featured-hero').innerHTML = `
+                    <div class="glass-card p-12 rounded-[3rem] border border-[#FFF200]/20 flex flex-col md:flex-row gap-12 items-center">
+                        <div class="flex-1">
+                            <span class="text-[9px] font-black bg-[#FFF200] text-black px-3 py-1 rounded-full uppercase tracking-tighter mb-4 inline-block">Featured Asset</span>
+                            <h2 class="font-black italic text-5xl font-condensed tracking-tighter mb-4">${featured.name}</h2>
+                            <p class="text-gray-400 text-sm mb-8 leading-relaxed max-w-md">${featured.desc || ''}</p>
+                            <div class="flex gap-4">
+                                <button class="bg-black text-[#FFF200] px-10 py-4 rounded-xl font-black text-[10px] uppercase tracking-widest" onclick="addToCartByData('${snapshot.docs[0].id}')">Deploy Now</button>
+                                <span class="text-3xl font-black italic text-red-600 self-center">$${(featured.price || 0).toFixed(2)}</span>
+                            </div>
+                        </div>
+                    </div>`;
+            }
+
+            // Render Grid
             const groups = snapshot.docs.reduce((acc, doc) => {
                 const data = doc.data();
                 const cat = data.platform || "Uncategorized";
@@ -105,8 +181,8 @@
                         <h2 class="font-black italic text-2xl uppercase font-condensed tracking-tighter">${category}</h2>
                         <div class="h-[2px] flex-1 bg-gray-100"></div>
                     </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"></div>
-                `;
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"></div>`;
+                
                 const grid = section.querySelector('.grid');
                 groups[category].forEach(a => {
                     const card = document.createElement('div');
@@ -125,9 +201,8 @@
                             <button class="bg-black text-[#FFF200] h-12 w-12 flex items-center justify-center rounded hover:bg-[#FFF200] hover:text-black transition shadow-lg">
                                 <i class="fa-solid fa-plus"></i>
                             </button>
-                        </div>
-                    `;
-                    card.querySelector('button').onclick = () => { cart.push(a); updateCart(); };
+                        </div>`;
+                    card.querySelector('button').onclick = () => { cart.push(a); updateCart(); UI.notify(`${a.name} added to queue.`); };
                     grid.appendChild(card);
                 });
                 container.appendChild(section);
@@ -135,6 +210,7 @@
         });
 
         function updateCart() {
+            localStorage.setItem('xclipse_cart', JSON.stringify(cart));
             document.getElementById('cart-count').innerText = cart.length;
             const list = document.getElementById('cart-list'); list.innerHTML = '';
             let total = 0;
@@ -157,6 +233,14 @@
             cart.splice(index, 1);
             updateCart();
         };
+
+        document.getElementById('checkout-btn').onclick = () => {
+            if (cart.length === 0) return UI.notify('Queue is empty', 'error');
+            UI.notify('Initializing Deployment...');
+            // Add your checkout redirection here
+        };
+
+        updateCart(); // Initial load
     </script>
 </body>
 </html>
