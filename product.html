@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+    <meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XCLIPSE STORE | INVENTORY</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@700&family=Nunito+Sans:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { background: #f8f8f8; font-family: 'Nunito Sans', sans-serif; }
+        .font-condensed { font-family: 'Roboto Condensed', sans-serif; }
+        .product-card { background: white; border: 1px solid #e5e7eb; transition: 0.3s; }
+        .product-card:hover { border-color: #FFF200; transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+        .drawer { transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); position: fixed; top: 0; right: 0; height: 100%; background: white; width: 400px; transform: translateX(100%); z-index: 1000; box-shadow: -20px 0 50px rgba(0,0,0,0.15); }
+        .drawer-open { transform: translateX(0); }
+    </style>
+</head>
+<body class="pb-20">
+
+    <div class="bg-[#FFF200] text-black text-[10px] font-black uppercase tracking-[0.2em] py-2 text-center">
+        ⚡ Active Network Monitoring Online - 24/7 Deployment Enabled ⚡
+    </div>
+
+    <nav class="bg-black py-5 px-8 sticky top-0 z-50 flex justify-between items-center">
+        <h1 class="text-[#FFF200] font-black italic text-2xl uppercase tracking-tighter font-condensed">
+            XCLIPSE <span class="text-white">STORE</span>
+        </h1>
+        <div class="hidden md:flex gap-8 text-white text-[11px] font-black uppercase tracking-widest">
+            <a href="index.html" class="hover:text-[#FFF200]">Home</a>
+            <a href="product.html" class="text-[#FFF200]">Shop All</a>
+            <a href="my-account.html" class="hover:text-[#FFF200]">Account</a>
+        </div>
+        <div class="flex items-center gap-6">
+            <a id="admin-btn" href="admin.html" class="hidden bg-red-600 text-white px-3 py-1 rounded font-black text-[9px] uppercase italic">Admin Console</a>
+            <div id="cart-trigger" class="relative cursor-pointer text-[#FFF200]">
+                <i class="fa-solid fa-cart-shopping text-xl"></i>
+                <span id="cart-count" class="absolute -top-3 -right-3 bg-white text-black text-[9px] px-1.5 rounded-full border-2 border-black font-black">0</span>
+            </div>
+        </div>
+    </nav>
+
+    <header class="bg-white border-b py-12 px-8 mb-12">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="font-black italic text-4xl uppercase font-condensed tracking-tighter">FULL <span class="text-[#FFF200] bg-black px-2">INVENTORY</span></h2>
+            <p class="text-[10px] text-gray-400 font-bold uppercase tracking-[0.3em] mt-2">Filter by sector or browse active protocols</p>
+        </div>
+    </header>
+
+    <main id="store-content" class="max-w-7xl mx-auto px-8"></main>
+
+    <div id="cart-drawer" class="drawer flex flex-col">
+        <div class="bg-black p-8 flex justify-between items-center text-[#FFF200] font-black italic text-2xl uppercase font-condensed">
+            Your Cart <button id="close-cart" class="text-white hover:text-[#FFF200]">×</button>
+        </div>
+        <div id="cart-list" class="flex-1 p-8 space-y-4 overflow-y-auto bg-gray-50"></div>
+        <div class="p-8 border-t bg-white">
+            <div class="flex justify-between mb-6 font-black text-gray-400 text-xs uppercase tracking-widest">
+                <span>Total Assets Value</span>
+                <span id="cart-total" class="text-red-600 text-2xl font-black italic">$0.00</span>
+            </div>
+            <button class="w-full bg-[#FFF200] py-5 font-black uppercase text-xs tracking-widest hover:bg-black hover:text-[#FFF200] transition">Initialize Deployment</button>
+        </div>
+    </div>
+
+    <footer class="bg-white border-t mt-32 py-16 px-8">
+        <div class="max-w-7xl mx-auto text-center">
+            <h1 class="text-black font-black italic text-2xl uppercase tracking-tighter font-condensed mb-6">XCLIPSE <span class="text-[#FFF200] bg-black px-1">STORE</span></h1>
+            <p class="text-[9px] font-black uppercase text-gray-300 tracking-[0.5em]">© 2026 XCLIPSE STUDIO | ALL RIGHTS RESERVED</p>
+        </div>
+    </footer>
+
+    <script type="module">
+        import { auth, db, onAuthStateChanged, getDoc, doc, onSnapshot, collection, query, orderBy } from './firebase.js';
+
+        let cart = [];
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const snap = await getDoc(doc(db, "users", user.uid));
+                if (snap.exists() && snap.data().role === 'admin') document.getElementById('admin-btn').classList.remove('hidden');
+            }
+        });
+
+        document.getElementById('cart-trigger').onclick = () => document.getElementById('cart-drawer').classList.add('drawer-open');
+        document.getElementById('close-cart').onclick = () => document.getElementById('cart-drawer').classList.remove('drawer-open');
+
+        const q = query(collection(db, "assets"), orderBy("platform", "asc"));
+        onSnapshot(q, (snapshot) => {
+            const container = document.getElementById('store-content');
+            container.innerHTML = '';
+
+            const groups = snapshot.docs.reduce((acc, doc) => {
+                const data = doc.data();
+                const cat = data.platform || "Uncategorized";
+                if (!acc[cat]) acc[cat] = [];
+                acc[cat].push({ id: doc.id, ...data });
+                return acc;
+            }, {});
+
+            Object.keys(groups).forEach(category => {
+                const section = document.createElement('section');
+                section.className = "mb-16";
+                section.innerHTML = `
+                    <div class="flex items-center gap-4 mb-8">
+                        <h2 class="font-black italic text-2xl uppercase font-condensed tracking-tighter">${category}</h2>
+                        <div class="h-[2px] flex-1 bg-gray-100"></div>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+                `;
+                const grid = section.querySelector('.grid');
+                groups[category].forEach(a => {
+                    const card = document.createElement('div');
+                    card.className = "product-card p-8 flex flex-col justify-between h-80";
+                    card.innerHTML = `
+                        <div>
+                            <div class="flex justify-between mb-4">
+                                <span class="text-[9px] font-black uppercase bg-gray-100 px-2 py-1">${a.unit || 'Service'}</span>
+                                <span class="text-[9px] font-black text-gray-300">#${a.id.substring(0,5)}</span>
+                            </div>
+                            <h3 class="font-black uppercase italic text-xl font-condensed tracking-tight mb-2">${a.name}</h3>
+                            <p class="text-[10px] text-gray-400 font-bold uppercase leading-relaxed line-clamp-3">${a.desc || ''}</p>
+                        </div>
+                        <div class="mt-8 pt-6 border-t border-gray-50 flex justify-between items-center">
+                            <p class="text-red-600 font-black italic text-2xl">$${(a.price || 0).toFixed(2)}</p>
+                            <button class="bg-black text-[#FFF200] h-12 w-12 flex items-center justify-center rounded hover:bg-[#FFF200] hover:text-black transition shadow-lg">
+                                <i class="fa-solid fa-plus"></i>
+                            </button>
+                        </div>
+                    `;
+                    card.querySelector('button').onclick = () => { cart.push(a); updateCart(); };
+                    grid.appendChild(card);
+                });
+                container.appendChild(section);
+            });
+        });
+
+        function updateCart() {
+            document.getElementById('cart-count').innerText = cart.length;
+            const list = document.getElementById('cart-list'); list.innerHTML = '';
+            let total = 0;
+            cart.forEach((item, index) => {
+                total += item.price;
+                list.innerHTML += `
+                    <div class="p-5 border border-gray-200 bg-white rounded-sm flex justify-between items-center">
+                        <div>
+                            <p class="text-[10px] font-black uppercase text-gray-400">${item.platform}</p>
+                            <p class="font-black uppercase italic text-sm font-condensed">${item.name}</p>
+                            <p class="text-red-600 font-black italic text-sm">$${item.price.toFixed(2)}</p>
+                        </div>
+                        <button onclick="removeItem(${index})" class="text-gray-300 hover:text-red-600"><i class="fa-solid fa-xmark"></i></button>
+                    </div>`;
+            });
+            document.getElementById('cart-total').innerText = `$${total.toFixed(2)}`;
+        }
+
+        window.removeItem = (index) => {
+            cart.splice(index, 1);
+            updateCart();
+        };
+    </script>
+</body>
+</html>

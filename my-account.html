@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XCLIPSE | MY ACCOUNT</title>
+    <script>window.tailwindConfig = { dev: true };</script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@700&family=Nunito+Sans:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { background: #f8f8f8; font-family: 'Nunito Sans', sans-serif; }
+        .font-condensed { font-family: 'Roboto Condensed', sans-serif; }
+        .status-unread { color: #ef4444; }
+        .status-replied { color: #22c55e; }
+    </style>
+</head>
+<body class="pb-20">
+
+    <nav class="bg-black py-5 px-8 flex justify-between items-center shadow-xl sticky top-0 z-50">
+        <h1 class="text-[#FFF200] font-black italic text-2xl uppercase tracking-tighter font-condensed">
+            XCLIPSE <span class="text-white">STORE</span>
+        </h1>
+        <div class="flex items-center gap-6">
+            <a href="index.html" class="text-white/40 hover:text-[#FFF200] text-[10px] font-black uppercase tracking-widest transition">Return Home</a>
+            <button id="logout-btn" class="bg-[#FFF200] text-black px-4 py-2 text-[10px] font-black uppercase tracking-widest hover:bg-white transition shadow-lg">
+                Terminate Session
+            </button>
+        </div>
+    </nav>
+
+    <main class="max-w-4xl mx-auto p-8 mt-10">
+        
+        <div class="bg-white p-10 border-t-4 border-black shadow-sm mb-12">
+            <div class="flex justify-between items-center mb-8">
+                <h3 class="font-black uppercase italic text-2xl font-condensed tracking-tighter">
+                    IDENTITY <span class="text-[#FFF200] bg-black px-2">PROFILE</span>
+                </h3>
+                <span id="user-id-display" class="text-[8px] font-bold text-gray-300 uppercase tracking-widest">UID: LOADING...</span>
+            </div>
+            
+            <div class="space-y-6">
+                <div>
+                    <label class="text-[10px] font-black text-gray-400 uppercase mb-2 block tracking-widest">Network Handle</label>
+                    <input type="text" id="user-name" class="w-full p-4 bg-gray-50 border text-sm font-bold uppercase tracking-tight outline-none focus:border-[#FFF200] transition">
+                </div>
+                <button id="save-btn" class="w-full bg-black text-[#FFF200] py-4 font-black uppercase text-xs tracking-widest hover:bg-[#FFF200] hover:text-black transition duration-300">
+                    Sync Changes to Registry
+                </button>
+            </div>
+        </div>
+
+        <div class="mt-12 pt-12 border-t border-gray-200">
+            <h3 class="font-black uppercase italic text-xl font-condensed tracking-tighter mb-6">
+                COMMUNICATION <span class="text-[#FFF200] bg-black px-2">LOG</span>
+            </h3>
+            <div id="user-inbox" class="space-y-6">
+                <div class="flex flex-col items-center py-12">
+                    <i class="fa-solid fa-circle-notch fa-spin text-gray-200 text-2xl mb-4"></i>
+                    <p class="text-[10px] text-gray-400 font-bold uppercase tracking-[0.3em]">Scanning Network Transmissions...</p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script type="module">
+        import { auth, db, onAuthStateChanged, signOut, doc, getDoc, updateDoc, collection, query, where, orderBy, onSnapshot } from './firebase.js';
+
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                window.location.href = "login.html";
+                return;
+            }
+
+            // 1. Display UID and Load Profile
+            document.getElementById('user-id-display').innerText = `UID: ${user.uid.substring(0, 12)}...`;
+            const userRef = doc(db, "users", user.uid);
+            
+            try {
+                const snap = await getDoc(userRef);
+                if (snap.exists()) {
+                    document.getElementById('user-name').value = snap.data().username || "";
+                }
+            } catch (err) { console.error("Profile Load Error:", err); }
+
+            // 2. Identity Sync (Save Button)
+            document.getElementById('save-btn').onclick = async () => {
+                const newName = document.getElementById('user-name').value;
+                const btn = document.getElementById('save-btn');
+                
+                btn.innerText = "SYNCING...";
+                try {
+                    await updateDoc(userRef, { username: newName });
+                    btn.innerText = "SYNC COMPLETE";
+                    setTimeout(() => btn.innerText = "SYNC CHANGES TO REGISTRY", 2000);
+                } catch (err) {
+                    alert("Registry Error: " + err.message);
+                    btn.innerText = "SYNC FAILED";
+                }
+            };
+
+            // 3. Logout Logic (Redirect to Index)
+            document.getElementById('logout-btn').onclick = async () => {
+                if (confirm("Terminate session and return to home page?")) {
+                    await signOut(auth);
+                    window.location.href = "index.html";
+                }
+            };
+
+            // 4. Communication Log Logic
+            const inboxContainer = document.getElementById('user-inbox');
+            const q = query(
+                collection(db, "inquiries"), 
+                where("userId", "==", user.uid), 
+                orderBy("timestamp", "desc")
+            );
+
+            onSnapshot(q, (snapshot) => {
+                if (snapshot.empty) {
+                    inboxContainer.innerHTML = `
+                        <div class="bg-white border p-12 text-center rounded-sm">
+                            <p class="text-[10px] text-gray-300 font-black uppercase tracking-[0.4em]">No archived transmissions in registry</p>
+                        </div>`;
+                    return;
+                }
+
+                inboxContainer.innerHTML = '';
+                snapshot.docs.forEach(docSnap => {
+                    const data = docSnap.data();
+                    const statusClass = data.status === 'REPLIED' ? 'status-replied' : 'status-unread';
+                    
+                    inboxContainer.innerHTML += `
+                        <div class="bg-white p-8 border border-gray-100 shadow-sm relative group overflow-hidden">
+                            <div class="flex justify-between items-center mb-6">
+                                <span class="text-[9px] font-black uppercase bg-black text-[#FFF200] px-3 py-1 tracking-tighter">${data.subject}</span>
+                                <span class="text-[9px] font-black uppercase ${statusClass} tracking-widest">${data.status}</span>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <p class="text-[9px] font-black uppercase text-gray-300 mb-1 tracking-widest">Inquiry Content:</p>
+                                <p class="text-xs font-bold text-gray-500 italic leading-relaxed">"${data.message}"</p>
+                            </div>
+
+                            ${data.adminReply ? `
+                                <div class="mt-6 pt-6 border-t border-dashed border-gray-200">
+                                    <p class="text-[9px] font-black uppercase text-black mb-2 flex items-center">
+                                        <i class="fa-solid fa-reply-all mr-2 text-[#FFF200] bg-black p-1"></i>Official Network Response:
+                                    </p>
+                                    <div class="bg-gray-50 p-5 rounded text-xs font-black leading-relaxed text-black border-l-4 border-black">
+                                        "${data.adminReply}"
+                                    </div>
+                                    <p class="text-[8px] font-bold text-gray-400 mt-2 uppercase">Verified At: ${data.repliedAt?.toDate().toLocaleString() || 'Recent'}</p>
+                                </div>
+                            ` : `
+                                <div class="mt-4 py-3 bg-gray-50/50 text-center rounded border border-dashed border-gray-100">
+                                    <p class="text-[9px] font-black uppercase text-gray-300 animate-pulse tracking-widest italic">Awaiting Admin Response...</p>
+                                </div>
+                            `}
+                        </div>`;
+                });
+            }, (error) => {
+                console.error("Snapshot Error:", error);
+                if (error.code === 'failed-precondition') {
+                    inboxContainer.innerHTML = `<p class="text-xs text-red-500 font-bold uppercase text-center">System Error: Missing Index. Check Console.</p>`;
+                }
+            });
+        });
+    </script>
+</body>
+</html>

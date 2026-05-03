@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+    <meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XCLIPSE STORE | GLOBAL SUPPORT</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@700&family=Nunito+Sans:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { background: #f8f8f8; font-family: 'Nunito Sans', sans-serif; }
+        .font-condensed { font-family: 'Roboto Condensed', sans-serif; }
+        .contact-card { background: white; border: 1px solid #e5e7eb; }
+        .input-field { width: 100%; background: #fdfdfd; border: 1px solid #eee; font-size: 0.875rem; font-weight: 700; text-transform: uppercase; outline: none; transition: 0.3s; }
+        .input-field:focus { border-color: #FFF200; background: white; }
+    </style>
+</head>
+<body class="pb-20">
+
+    <div class="bg-[#FFF200] text-black text-[10px] font-black uppercase tracking-[0.2em] py-2 text-center">
+        ⚡ GLOBAL NETWORK MONITORING ACTIVE - 24/7 SUPPORT DEPLOYMENT ⚡
+    </div>
+
+    <nav class="bg-black py-5 px-8 sticky top-0 z-50 flex justify-between items-center shadow-xl">
+        <h1 class="text-[#FFF200] font-black italic text-2xl uppercase tracking-tighter font-condensed">
+            XCLIPSE <span class="text-white">STORE</span>
+        </h1>
+        <div class="hidden md:flex gap-8 text-white text-[11px] font-black uppercase tracking-widest">
+            <a href="index.html" class="hover:text-[#FFF200]">Home</a>
+            <a href="product.html" class="hover:text-[#FFF200]">Shop All</a>
+            <a href="contact.html" class="text-[#FFF200]">Support</a>
+            <a href="my-account.html" class="hover:text-[#FFF200]">Account</a>
+        </div>
+        <div class="flex items-center gap-4">
+            <a href="product.html" class="bg-[#FFF200] p-2 rounded text-black text-xs px-4 font-black">STORE</a>
+        </div>
+    </nav>
+
+    <header class="bg-black border-b-4 border-[#FFF200] py-24 px-8 text-center">
+        <h2 class="text-white font-black italic text-5xl md:text-7xl uppercase tracking-tighter font-condensed">
+            GLOBAL <span class="text-[#FFF200]">COMMAND</span>
+        </h2>
+        <p class="text-gray-400 text-[10px] font-bold uppercase tracking-[0.5em] mt-4">Universal Asset Support & Network Inquiries</p>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-8 -mt-12">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <div class="lg:col-span-1 space-y-6">
+                <div class="contact-card p-8 shadow-sm">
+                    <h3 class="font-black uppercase italic text-xl font-condensed mb-6 border-b-2 border-[#FFF200] pb-2">Connectivity</h3>
+                    <div class="space-y-6">
+                        <div class="flex items-start gap-4">
+                            <i class="fa-solid fa-globe text-[#FFF200] mt-1"></i>
+                            <div>
+                                <p class="text-[10px] font-black uppercase text-gray-400">Operations</p>
+                                <p class="text-xs font-black uppercase">Global Distribution</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <i class="fa-solid fa-microchip text-[#FFF200] mt-1"></i>
+                            <div>
+                                <p class="text-[10px] font-black uppercase text-gray-400">Registry Email</p>
+                                <p class="text-xs font-black uppercase">support@xclipsestudio.com</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <i class="fa-brands fa-instagram text-[#FFF200] mt-1"></i>
+                            <div>
+                                <p class="text-[10px] font-black uppercase text-gray-400">Official Handle</p>
+                                <p class="text-xs font-black uppercase">@thekidleeroy.m</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-black p-8 text-white">
+                    <h3 class="font-black uppercase italic text-xl font-condensed mb-4 text-[#FFF200]">Network Uptime</h3>
+                    <p class="text-[10px] font-bold uppercase tracking-widest leading-loose text-gray-400">
+                        Response Protocol: Active<br>
+                        Monitoring: 24/7/365<br>
+                        <span class="text-[#FFF200]">GLOBAL COORDINATED TIME (UTC)</span>
+                    </p>
+                </div>
+            </div>
+
+            <div class="lg:col-span-2">
+                <div class="contact-card p-10 shadow-sm h-full">
+                    <h3 class="font-black uppercase italic text-2xl font-condensed mb-8">Deploy <span class="text-[#FFF200] bg-black px-2">Transmission</span></h3>
+                    
+                    <form id="contact-form" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="col-span-1">
+                            <label class="text-[10px] font-black uppercase text-gray-400 mb-2 block">Username</label>
+                            <input type="text" id="name" class="input-field p-4" placeholder="USER ID" required>
+                        </div>
+                        <div class="col-span-1">
+                            <label class="text-[10px] font-black uppercase text-gray-400 mb-2 block">Return Email</label>
+                            <input type="email" id="email" class="input-field p-4" placeholder="COMMUNICATION PATH" required>
+                        </div>
+                        <div class="col-span-full">
+                            <label class="text-[10px] font-black uppercase text-gray-400 mb-2 block">Inquiry Sector</label>
+                            <select id="subject" class="input-field p-4 appearance-none font-black">
+                                <option>Asset Delivery Support</option>
+                                <option>Custom Web Architecture</option>
+                                <option>Network Error Report</option>
+                                <option>Partnership Inquiry</option>
+                            </select>
+                        </div>
+                        <div class="col-span-full">
+                            <label class="text-[10px] font-black uppercase text-gray-400 mb-2 block">Detailed Message</label>
+                            <textarea id="message" rows="6" class="input-field p-4" placeholder="SPECIFY YOUR TECHNICAL REQUIREMENTS..." required></textarea>
+                        </div>
+                        <div class="col-span-full pt-4">
+                            <button type="submit" id="submit-btn" class="w-full bg-black text-[#FFF200] py-5 font-black uppercase text-xs tracking-[0.3em] hover:bg-[#FFF200] hover:text-black transition duration-500">
+                                Send Transmission
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-white border-t mt-32 py-16 px-8 text-center">
+        <h1 class="text-black font-black italic text-2xl uppercase tracking-tighter font-condensed mb-6">XCLIPSE <span class="text-[#FFF200] bg-black px-1">STORE</span></h1>
+        <p class="text-[9px] font-black uppercase text-gray-300 tracking-[0.5em]">© 2026 XCLIPSE STUDIO | GLOBAL DISTRIBUTION NETWORK</p>
+    </footer>
+
+    <script type="module">
+        import { db, collection, addDoc, serverTimestamp } from './firebase.js';
+
+        const form = document.getElementById('contact-form');
+        const btn = document.getElementById('submit-btn');
+
+        form.onsubmit = async (e) => {
+            e.preventDefault();
+            btn.innerText = "UPLOADING TO REGISTRY...";
+            btn.disabled = true;
+
+            try {
+                // This saves the message to the "inquiries" collection used by your Admin Inbox
+                await addDoc(collection(db, "inquiries"), {
+                    name: document.getElementById('name').value.toUpperCase(),
+                    email: document.getElementById('email').value,
+                    subject: document.getElementById('subject').value,
+                    message: document.getElementById('message').value,
+                    timestamp: serverTimestamp()
+                });
+
+                btn.innerText = "TRANSMISSION SUCCESSFUL";
+                btn.style.backgroundColor = "#FFF200"; 
+                btn.style.color = "black";
+                form.reset();
+                
+                setTimeout(() => {
+                    btn.innerText = "Send Transmission";
+                    btn.style.backgroundColor = "black";
+                    btn.style.color = "#FFF200";
+                    btn.disabled = false;
+                }, 4000);
+
+            } catch (err) {
+                alert("Critical System Error: " + err.message);
+                btn.innerText = "Send Transmission";
+                btn.disabled = false;
+            }
+        };
+    </script>
+</body>
+</html>
